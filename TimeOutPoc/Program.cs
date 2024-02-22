@@ -26,6 +26,11 @@ namespace TimeOutPoc
             builder.Services.AddServerSideBlazor();
             builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
             builder.Services.AddSingleton<WeatherForecastService>();
+            builder.Services.ConfigureApplicationCookie(cookieAuthenticationOptions =>
+            {
+                cookieAuthenticationOptions.ExpireTimeSpan = TimeSpan.FromMinutes(1);
+                cookieAuthenticationOptions.SlidingExpiration = true;
+            });
 
             var app = builder.Build();
 

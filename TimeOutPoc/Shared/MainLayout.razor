@@ -1,5 +1,7 @@
 ﻿@inherits LayoutComponentBase
-
+@inject IJSRuntime js
+@inject AuthenticationStateProvider AuthenticationState
+@inject NavigationManager NavigationManager
 <PageTitle>TimeOutPoc</PageTitle>
 
 <div class="page">
@@ -18,3 +20,25 @@
         </article>
     </main>
 </div>
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await js.InvokeVoidAsync("initializeInactivityTimer", DotNetObjectReference.Create(this));
+        }
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+
+
+    [JSInvokable]
+    public async Task Logout()
+    {
+        var authState = await AuthenticationState.GetAuthenticationStateAsync();
+        if (authState.User.Identity.IsAuthenticated  )
+        {
+            NavigationManager.NavigateTo("Identity/Account/Login", true);
+        }
+    }
+}
